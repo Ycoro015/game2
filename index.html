@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>みーころの冒険（移動版）</title>
+<style>
+body{
+    margin:0;
+    background:#000814;
+    color:white;
+    text-align:center;
+}
+canvas{
+    background:#0a0a1a;
+    display:block;
+    margin:20px auto;
+    border:2px solid #444;
+}
+#text{
+    width:600px;
+    margin:auto;
+    padding:10px;
+    background:rgba(255,255,255,0.1);
+    border-radius:10px;
+}
+</style>
+</head>
+<body>
+
+<h2>みーころの冒険（矢印キーで移動）</h2>
+<canvas id="game" width="600" height="400"></canvas>
+<div id="text">矢印キーで動いて仲間に触れよう</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let player = {x:50,y:50,size:20};
+let text = document.getElementById("text");
+
+// 仲間たち
+let characters = [
+ {name:"セイラ", x:200, y:100, msg:"セイラ「光って…本当に戻るのかな？」"},
+ {name:"誠也", x:400, y:200, msg:"誠也「魔王ってさ、本当に敵なのか？」"},
+ {name:"みーくん", x:100, y:300, msg:"みーくん「みーころ…なんか懐かしい気がする」"},
+ {name:"レオン", x:500, y:100, msg:"レオン「真実を知っても、進めるか？」"}
+];
+
+let keys = {};
+
+document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => keys[e.key] = false);
+
+function update(){
+    if(keys["ArrowUp"]) player.y -= 2;
+    if(keys["ArrowDown"]) player.y += 2;
+    if(keys["ArrowLeft"]) player.x -= 2;
+    if(keys["ArrowRight"]) player.x += 2;
+
+    // 当たり判定（会話）
+    characters.forEach(c=>{
+        let dx = player.x - c.x;
+        let dy = player.y - c.y;
+        if(Math.sqrt(dx*dx + dy*dy) < 25){
+            text.innerHTML = c.msg;
+        }
+    });
+}
+
+function draw(){
+    ctx.clearRect(0,0,600,400);
+
+    // プレイヤー
+    ctx.fillStyle = "white";
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+
+    // 仲間
+    ctx.fillStyle = "cyan";
+    characters.forEach(c=>{
+        ctx.fillRect(c.x, c.y, 20, 20);
+    });
+}
+
+function gameLoop(){
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+</script>
+
+</body>
+</html>
+let storyFlag = 0;
